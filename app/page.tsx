@@ -1,65 +1,107 @@
-import Image from "next/image";
+'use client';
+
+import React, { useState } from 'react';
+import { Navbar } from '../components/Navbar';
+import { PollCard } from '../components/PollCard';
+import { ResultsPanel } from '../components/ResultsPanel';
+import { AdminPanel } from '../components/AdminPanel';
+import { Button } from '../components/ui';
+import { stellar } from '../lib/stellar-helper';
 
 export default function Home() {
+  const [publicKey, setPublicKey] = useState<string>('');
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
+
+  const handleVoteSuccess = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleQuestionSet = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleConnect = (key: string) => {
+    setPublicKey(key);
+    setIsConnected(true);
+  };
+
+  const handleDisconnect = () => {
+    setPublicKey('');
+    setIsConnected(false);
+  };
+
+  const handleConnectClick = async () => {
+    try {
+      const address = await stellar.connectWallet();
+      handleConnect(address);
+    } catch (error: any) {
+      console.error('Failed to connect wallet:', error);
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navbar
+        publicKey={publicKey}
+        isConnected={isConnected}
+        onConnect={handleConnect}
+        onDisconnect={handleDisconnect}
+      />
+
+      <main className="flex-1 w-full max-w-[1100px] mx-auto px-4 sm:px-6 py-12">
+        {!isConnected ? (
+          <>
+            {/* Hero Section */}
+            <div className="py-20 text-center animate-slide-up bg-surface border border-borderInner rounded-2xl shadow-sm mb-10">
+              <h2 className="font-serif text-5xl font-medium tracking-tight text-textMain mb-4">
+                StellarPoll
+              </h2>
+              <p className="text-textMuted text-lg max-w-md mx-auto">
+                On-chain voting powered by Soroban smart contracts.
+              </p>
+              <div className="mt-8">
+                <Button onClick={handleConnectClick}>
+                  Connect Wallet
+                </Button>
+              </div>
+            </div>
+
+            {/* How It Works Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-slide-up stagger-2">
+              {[
+                { title: 'Connect', desc: 'Link your Stellar wallet' },
+                { title: 'Read the Question', desc: 'Pulled live from the contract' },
+                { title: 'Cast Your Vote', desc: 'Signed transaction on testnet' },
+                { title: 'See Live Results', desc: 'Real-time result sync' },
+              ].map((step, i) => (
+                <div key={i} className="claude-card p-6 text-center">
+                  <div className="text-3xl mb-3">{i + 1}</div>
+                  <h3 className="font-semibold text-textMain mb-2">{step.title}</h3>
+                  <p className="text-sm text-textMuted">{step.desc}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-5 animate-slide-up stagger-1">
+              <PollCard publicKey={publicKey} onVoteSuccess={handleVoteSuccess} />
+              <div className="mt-4 animate-slide-up stagger-2">
+                <AdminPanel publicKey={publicKey} onQuestionSet={handleQuestionSet} />
+              </div>
+            </div>
+            <div className="lg:col-span-7 animate-slide-up stagger-2">
+              <ResultsPanel refreshTrigger={refreshTrigger} />
+            </div>
+          </div>
+        )}
       </main>
+
+      <footer className="py-8 text-center text-textMuted text-sm">
+        <p className="mb-1">StellarPoll · Soroban Testnet · Level 2 Yellow Belt</p>
+        <p className="text-xs">Do not use real funds</p>
+      </footer>
     </div>
   );
 }
