@@ -14,7 +14,7 @@ export function ResultsPanel({ refreshTrigger }: { refreshTrigger: number }) {
   const loadResults = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await contractClient.getResults();
+      const data = await contractClient().getResults();
       setResults(data);
       setLastUpdated(Date.now());
       setSecondsAgo(0);

@@ -33,7 +33,7 @@ export default function Home() {
 
   const handleConnectClick = async () => {
     try {
-      const address = await stellar.connectWallet();
+      const address = await stellar().connectWallet();
       handleConnect(address);
     } catch (error: any) {
       console.error('Failed to connect wallet:', error);

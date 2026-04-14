@@ -246,4 +246,11 @@ export class StellarHelper {
   }
 }
 
-export const stellar = new StellarHelper('testnet');
+let stellarInstance: StellarHelper | null = null;
+
+export const stellar = (): StellarHelper => {
+  if (!stellarInstance) {
+    stellarInstance = new StellarHelper('testnet');
+  }
+  return stellarInstance;
+};

@@ -24,14 +24,14 @@ export function AdminPanel({ publicKey, onQuestionSet }: { publicKey: string; on
     setTxError('');
 
     try {
-      const hash = await contractClient.setQuestion(publicKey, question);
+      const hash = await contractClient().setQuestion(publicKey, question);
       setTxHash(hash);
       setTxStatus('success');
       setQuestion('');
       onQuestionSet();
     } catch (error: any) {
       if (error instanceof WalletRejectedError) {
-        setTxError('You cancelled the transaction.');
+        setTxError('You cancelled the transaction. Click Submit Vote to try again.');
       } else if (error instanceof InsufficientBalanceError) {
         setTxError('Insufficient balance. You need at least 1.5 XLM to cover network fees.');
       } else {

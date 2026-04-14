@@ -25,11 +25,11 @@ export function Navbar({
     setWalletError(null);
 
     try {
-      const address = await stellar.connectWallet();
+      const address = await stellar().connectWallet();
       onConnect(address);
     } catch (error: any) {
       if (error instanceof WalletNotFoundError) {
-        setWalletError('No Stellar wallet found. Please install Freighter or another wallet.');
+        setWalletError('No Stellar wallet found. Please install Freighter or another wallet extension.');
       } else {
         setWalletError(error.message || 'Failed to connect wallet');
       }

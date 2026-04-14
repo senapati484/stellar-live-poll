@@ -1,8 +1,41 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@theme {
+  --color-background: #F3EFEC;
+  --color-surface: #FAF9F7;
+  --color-primary: #C96442;
+  --color-textMain: #24211D;
+  --color-textMuted: #7A7570;
+  --color-borderInner: #E8E5E0;
+  --color-borderOuter: #D4D0CA;
+  --color-accent: #C96442;
+  --color-success: #2F593F;
+  --color-error: #8C2F2B;
+
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Fraunces', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --animate-slide-up: slide-up 0.4s ease-out forwards;
+  --animate-fade-in: fade-in 0.6s ease-out forwards;
+  --animate-spin: spin 1s linear infinite;
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
 
 :root {
   --font-sans: 'Inter', sans-serif;
@@ -35,42 +68,86 @@
   background-color: #C96442;
 }
 
-@layer utilities {
-  .claude-card {
-    @apply bg-surface border border-borderInner rounded-xl shadow-sm transition-all duration-200;
+@utility claude-card {
+  background-color: #FAF9F7;
+  border: 1px solid #E8E5E0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+  &:hover {
+    border-color: #D4D0CA;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
-  .claude-card:hover {
-    @apply border-borderOuter shadow-md;
+}
+
+@utility claude-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  transition: all 0.2s;
+  border-radius: 0.5rem;
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
-  .claude-button {
-    @apply inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+@utility claude-button-primary {
+  background-color: #C96442;
+  color: white;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  &:hover {
+    background-color: #24211D;
   }
-  .claude-button-primary {
-    @apply bg-primary text-white hover:bg-textMain border border-transparent shadow-sm;
+}
+
+@utility claude-button-secondary {
+  background-color: #FAF9F7;
+  color: #24211D;
+  border: 1px solid #D4D0CA;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  &:hover {
+    background-color: #F0EEEB;
   }
-  .claude-button-secondary {
-    @apply bg-surface text-textMain border border-borderOuter hover:bg-[#F0EEEB] shadow-sm;
+}
+
+@utility claude-input {
+  width: 100%;
+  background-color: #FAF9F7;
+  border: 1px solid #E8E5E0;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: #24211D;
+  transition: all 0.2s;
+  &::placeholder {
+    color: rgba(122, 117, 112, 0.6);
   }
-  .claude-input {
-    @apply w-full bg-surface border border-borderInner rounded-lg px-4 py-2 text-textMain placeholder-textMuted/60 transition-all duration-200 focus:outline-none focus:border-borderOuter focus:shadow-[0_0_0_2px_rgba(201,100,66,0.1)];
+  &:focus {
+    outline: none;
+    border-color: #D4D0CA;
+    box-shadow: 0 0 0 2px rgba(201, 100, 66, 0.1);
   }
-  .animate-slide-up {
-    animation: slide-up 0.4s ease-out forwards;
-  }
-  .stagger-1 {
-    animation-delay: 0.1s;
-    opacity: 0;
-  }
-  .stagger-2 {
-    animation-delay: 0.2s;
-    opacity: 0;
-  }
-  .stagger-3 {
-    animation-delay: 0.3s;
-    opacity: 0;
-  }
-  .stagger-4 {
-    animation-delay: 0.4s;
-    opacity: 0;
-  }
+}
+
+@utility animate-slide-up {
+  animation: slide-up 0.4s ease-out forwards;
+}
+
+@utility stagger-1 {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+@utility stagger-2 {
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+@utility stagger-3 {
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+@utility stagger-4 {
+  animation-delay: 0.4s;
+  opacity: 0;
 }

@@ -28,8 +28,8 @@ export function PollCard({ publicKey, onVoteSuccess }: { publicKey: string; onVo
     setLoading(true);
     try {
       const [q, results] = await Promise.all([
-        contractClient.getQuestion(),
-        contractClient.getResults(),
+        contractClient().getQuestion(),
+        contractClient().getResults(),
       ]);
       setQuestion(q);
       const counts: Record<string, number> = {};
@@ -51,7 +51,7 @@ export function PollCard({ publicKey, onVoteSuccess }: { publicKey: string; onVo
     setTxError('');
 
     try {
-      const hash = await contractClient.vote(publicKey, selectedOption);
+      const hash = await contractClient().vote(publicKey, selectedOption);
       setTxHash(hash);
       setTxStatus('success');
       
@@ -64,7 +64,7 @@ export function PollCard({ publicKey, onVoteSuccess }: { publicKey: string; onVo
       onVoteSuccess();
     } catch (error: any) {
       if (error instanceof WalletRejectedError) {
-        setTxError('You cancelled the transaction.');
+        setTxError('You cancelled the transaction. Click Submit Vote to try again.');
       } else if (error instanceof InsufficientBalanceError) {
         setTxError('Insufficient balance. You need at least 1.5 XLM to cover network fees.');
       } else {
