@@ -31,8 +31,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable} bg-background text-textMain antialiased`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} ${fraunces.variable} ${jetbrainsMono.variable} bg-background text-textMain antialiased`} suppressHydrationWarning>
         {children}
       </body>
     </html>

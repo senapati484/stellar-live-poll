@@ -56,7 +56,8 @@ export class StellarHelper {
 
   async connectWallet(): Promise<string> {
     try {
-      const { address } = await StellarWalletsKit.getAddress();
+      // authModal opens the UI allowing the user to select and connect a wallet
+      const { address } = await StellarWalletsKit.authModal();
       if (!address) {
         throw new WalletNotFoundError('No wallet extension detected');
       }
@@ -76,6 +77,15 @@ export class StellarHelper {
     // StellarWalletsKit doesn't have a built-in disconnect method
     // The wallet state is managed by the wallet extension
     // We can clear any local state if needed
+  }
+
+  async fundTestnetAccount(publicKey: string): Promise<boolean> {
+    try {
+      const response = await fetch(`https://friendbot.stellar.org?addr=${encodeURIComponent(publicKey)}`);
+      return response.ok;
+    } catch (e) {
+      return false;
+    }
   }
 
   async getBalance(publicKey: string): Promise<{ xlm: string; assets: Asset[] }> {

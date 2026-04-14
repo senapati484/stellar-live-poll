@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { FiRefreshCw } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
 import { contractClient } from '../lib/contract-client';
 import { SkeletonLoader, EmptyState } from './ui';
 
@@ -46,16 +47,23 @@ export function ResultsPanel({ refreshTrigger }: { refreshTrigger: number }) {
   }, []);
 
   const totalVotes = results.reduce((sum, r) => sum + r.count, 0);
-  const maxCount = Math.max(...results.map(r => r.count), 1);
 
   return (
-    <div className="claude-card p-6 sm:p-8 animate-slide-up">
+    <motion.div 
+       initial={{ opacity: 0, y: 15 }}
+       animate={{ opacity: 1, y: 0 }}
+       transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+       className="claude-card p-6 sm:p-8"
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-surface border border-borderInner rounded-lg shadow-sm flex items-center justify-center">
+          <motion.div 
+             whileHover={{ scale: 1.05 }}
+             className="w-10 h-10 bg-surface border border-borderInner rounded-lg shadow-sm flex items-center justify-center cursor-default"
+          >
             <span className="text-xl">📊</span>
-          </div>
+          </motion.div>
           <h2 className="text-2xl font-serif font-medium text-textMain tracking-tight">
             Live Results
           </h2>
@@ -81,7 +89,7 @@ export function ResultsPanel({ refreshTrigger }: { refreshTrigger: number }) {
       </div>
 
       {/* Loading State */}
-      {loading && <SkeletonLoader count={4} height="h-12" />}
+      {loading && results.length === 0 && <SkeletonLoader count={4} height="h-12" />}
 
       {/* Empty State */}
       {!loading && results.length === 0 && (
@@ -93,7 +101,7 @@ export function ResultsPanel({ refreshTrigger }: { refreshTrigger: number }) {
       )}
 
       {/* Results */}
-      {!loading && results.length > 0 && (
+      {results.length > 0 && (
         <div className="space-y-4">
           {results.map((result, index) => {
             const percentage = totalVotes > 0 ? (result.count / totalVotes) * 100 : 0;
@@ -105,16 +113,23 @@ export function ResultsPanel({ refreshTrigger }: { refreshTrigger: number }) {
                 <div className="flex items-center justify-between">
                   <span className="text-textMain font-medium text-sm">{result.option}</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono bg-surface border border-borderInner rounded px-1.5 py-0.5">
+                    <motion.span 
+                      key={result.count}
+                      initial={{ scale: 1.5, color: '#C96442' }}
+                      animate={{ scale: 1, color: '#24211D' }}
+                      className="text-[10px] font-mono bg-surface border border-borderInner rounded px-1.5 py-0.5"
+                    >
                       {result.count}
-                    </span>
-                    <span className="text-textMuted text-xs text-right">{percentage.toFixed(1)}%</span>
+                    </motion.span>
+                    <span className="text-textMuted text-xs text-right w-10">{percentage.toFixed(1)}%</span>
                   </div>
                 </div>
-                <div className="h-2 bg-borderInner rounded-full w-full">
-                  <div
-                    className={`h-2 rounded-full transition-all duration-700 ${barColor}`}
-                    style={{ width: `${percentage}%` }}
+                <div className="h-2 bg-borderInner rounded-full w-full overflow-hidden relative">
+                  <motion.div
+                    className={`h-2 rounded-full absolute top-0 left-0 ${barColor}`}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${percentage}%` }}
+                    transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
                   />
                 </div>
               </div>
@@ -125,10 +140,14 @@ export function ResultsPanel({ refreshTrigger }: { refreshTrigger: number }) {
 
       {/* Total Votes Footer */}
       {!loading && results.length > 0 && (
-        <div className="text-textMuted text-xs text-center mt-4">
+        <motion.div 
+           initial={{ opacity: 0 }} 
+           animate={{ opacity: 1 }}
+           className="text-textMuted text-xs text-center mt-4"
+        >
           Total votes: {totalVotes}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

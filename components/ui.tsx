@@ -190,14 +190,15 @@ export function Button({
   };
 
   return (
-    <button
-      type={type}
+    <motion.button
+      type={type as any}
       onClick={onClick}
       disabled={disabled}
+      whileTap={disabled ? {} : { scale: 0.98 }}
       className={`claude-button ${variantClasses[variant]} ${fullWidth ? 'w-full' : ''}`}
     >
       {children}
-    </button>
+    </motion.button>
   );
 }
 
