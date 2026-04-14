@@ -155,3 +155,12 @@ stellar-live-poll/
 │       └── Cargo.toml       # Contract dependencies
 └── DEPLOY_GUIDE.md          # Contract deployment instructions
 ```
+
+## Environment Variables
+To run this project locally, ensure you define the following in your `.env.local`:
+
+```
+NEXT_PUBLIC_CONTRACT_ID=CC3GTRSOAEFTXKZVKMXOX4SJ66NU6CRVN5OP3F76WN5TVFLZBOEWIZDA
+NEXT_PUBLIC_NETWORK=testnet
+```
+
